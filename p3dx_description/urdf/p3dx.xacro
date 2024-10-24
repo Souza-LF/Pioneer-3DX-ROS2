@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<robot name="pioneer3dx" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="p3dx" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- import all gazebo-customization elements, including gazebo colors -->
   <xacro:include filename="$(find p3dx_description)/urdf/gz.xacro" />
