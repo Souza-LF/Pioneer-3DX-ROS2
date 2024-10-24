@@ -77,8 +77,8 @@
 		<plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
 			<alwaysOn>true</alwaysOn>
 			<updateRate>100</updateRate>
-			<leftJoint>base_right_wheel_joint</leftJoint>
-			<rightJoint>base_left_wheel_joint</rightJoint>
+			<left_joint>base_left_wheel_joint</left_joint>
+			<right_joint>base_right_wheel_joint</right_joint>
 			<wheelSeparation>0.39</wheelSeparation>
 			<wheelDiameter>0.15</wheelDiameter>
 			<torque>5</torque>
