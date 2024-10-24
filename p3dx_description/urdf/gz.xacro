@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+
+<robot>
+
+	<!-- properties (constants) -->
+	<!-- <property name="ns" value="p3dx" /> -->
+
+	<!-- ros_control plugin -->
+	<!-- <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>p3dx</robotNamespace>
+    </plugin>
+  </gazebo> -->
+
+	<!-- base_link -->
+	<gazebo reference="base_link">
+		<material>Gazebo/Red</material>
+	</gazebo>
+
+	<!-- top_plate -->
+	<gazebo reference="top_plate">
+		<material>Gazebo/Black</material>
+	</gazebo>
+
+	<!-- swivel -->
+	<gazebo reference="swivel">
+		<material>Gazebo/Grey</material>
+	</gazebo>
+
+	<!-- center_hubcap -->
+	<gazebo reference="center_hubcap">
+		<material>Gazebo/Grey</material>
+	</gazebo>
+
+	<!-- center_wheel -->
+	<gazebo reference="center_wheel">
+		<material>Gazebo/Black</material>
+		<mu1>10.0</mu1>
+		<mu2>10.0</mu2>
+		<kp>1000000.0</kp>
+		<kd>1.0</kd>
+	</gazebo>
+
+	<!-- front_sonar -->
+	<gazebo reference="front_sonar">
+		<material value="Gazebo/Yellow" />
+	</gazebo>
+
+	<gazebo>
+
+		<!-- GZ Gazebo Plugins -->
+		<plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+			<render_engine>ogre2</render_engine>
+		</plugin>
+
+		<plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
+		</plugin>
+
+		<plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+		</plugin>
+		
+		<!-- IGN Gazebo Plugins -->
+		<!-- <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+			<render_engine>ogre2</render_engine>
+		</plugin>
+
+		<plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::systems::Imu">
+		</plugin>
+
+		<plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+		</plugin> -->
+
+	</gazebo>
+
+	<!-- differential drive -->
+	<gazebo>
+		<plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
+			<alwaysOn>true</alwaysOn>
+			<updateRate>100</updateRate>
+			<leftJoint>base_right_wheel_joint</leftJoint>
+			<rightJoint>base_left_wheel_joint</rightJoint>
+			<wheelSeparation>0.39</wheelSeparation>
+			<wheelDiameter>0.15</wheelDiameter>
+			<torque>5</torque>
+			<commandTopic>p3dx/cmd_vel</commandTopic>
+			<odometryTopic>p3dx/odom</odometryTopic>
+			<odometryFrame>odom</odometryFrame>
+			<robotBaseFrame>base_link</robotBaseFrame>
+		</plugin>
+	</gazebo>
+
+	<!-- ground truth -->
+	<gazebo>
+		<!-- <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so"> -->
+		<plugin name="ignition::gazebo::systems::OdometryPublisher" filename="libignition-gazebo6-odometry-publisher-system">
+			<odom_frame>odom</odom_frame>
+			<robot_base_frame>base_visual</robot_base_frame>
+			<odom_topic>odom</odom_topic>
+			<tf_topic>/tf</tf_topic>
+			<dimensions>2</dimensions>
+			<odom_publish_frequency>10</odom_publish_frequency>
+
+			<!-- <alwaysOn>true</alwaysOn>
+			<updateRate>100.0</updateRate>
+			<bodyName>base_link</bodyName>
+			<topicName>p3dx/base_pose_ground_truth</topicName>
+			<gaussianNoise>0.01</gaussianNoise>
+			<frameName>map</frameName> -->
+			<!-- initialize odometry for fake localization -->
+			<!-- <xyzOffsets>0 0 0</xyzOffsets>
+			<rpyOffsets>0 0 0</rpyOffsets> -->
+		</plugin>
+	</gazebo>
+
+	<!-- lms100 -->
+	<gazebo reference="lms100">
+		<sensor type="gpu_lidar" name="gpu_lidar">
+			<topic>p3dx/scan</topic>
+			<update_rate>50</update_rate>
+			<gz_frame_id>lms100</gz_frame_id>
+			<!-- <pose>0 0 0 0 0 0</pose> -->
+
+			<lidar>
+				<scan>
+					<horizontal>
+						<samples>360</samples>
+						<resolution>1</resolution>
+						<min_angle>-1.570796</min_angle>
+						<max_angle>1.570796</max_angle>
+					</horizontal>
+				</scan>
+				<range>
+					<min>0.10</min>
+					<max>30.0</max>
+					<resolution>0.01</resolution>
+				</range>
+				<noise>
+					<type>gaussian</type>
+					<!-- Noise parameters based on published spec for Hokuyo laser achieving 
+						"+-30mm" accuracy at range < 10m. A mean of 0.0m and stddev of 0.01m will 
+						put 99.7% of samples within 0.03m of the true reading. -->
+					<mean>0.0</mean>
+					<stddev>0.001</stddev>
+				</noise>
+			</lidar>
+			<!-- <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+				<topicName>p3dx/laser/scan</topicName>
+				<frameName>lms100</frameName>
+			</plugin> -->
+			<visualize>true</visualize>
+			<always_on>1</always_on>
+		</sensor>
+	</gazebo>
+
+</robot>
