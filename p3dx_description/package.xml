@@ -19,6 +19,10 @@
   <depend>rclpy</depend>
   <depend>ros_gz</depend>
   <exec_depend>ros2launch</exec_depend>
+  <!-- <exec_depend>launch</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend> -->
+  
   <!-- <export>
     <build_type>ament_python</build_type>
     <ros2_package_name>p3dx_description</ros2_package_name>
