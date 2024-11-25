@@ -35,7 +35,7 @@
 			</collision>
 		</link>
 
-		<joint name="base_${suffix}_hubcap_joint" type="continuous">
+		<joint name="base_${suffix}_hubcap_joint" type="fixed">
 			<axis xyz="0 1 0" />
 			<anchor xyz="0 0 0" />
 			<limit effort="100" velocity="100" />
@@ -72,10 +72,12 @@
 			</collision>
 		</link>
 
-		<joint name="base_${suffix}_wheel_joint" type="fixed">
+		<joint name="base_${suffix}_wheel_joint" type="continuous">
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<parent link="p3dx_${suffix}_hubcap" />
 			<child link="p3dx_${suffix}_wheel" />
+			<axis xyz="0 1 0" rpy="0 0 0"/>
+			<!-- <limit lower="-1.57" upper="1.57" effort="10.0" velocity="1.0"/> -->
 		</joint>
 
 		<!-- gazebo elements -->
@@ -104,4 +106,3 @@
 	</xacro:macro>
 
 </robot>
-

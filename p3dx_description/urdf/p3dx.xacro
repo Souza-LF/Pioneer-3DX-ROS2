@@ -2,21 +2,21 @@
 
 <robot name="p3dx" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- import all gazebo-customization elements, including gazebo colors -->
-  <xacro:include filename="$(find p3dx_description)/urdf/gz.xacro" />
-  <!-- import the pioneer 3dx's wheels -->
-  <xacro:include filename="$(find p3dx_description)/urdf/p3dx_wheel.xacro" />
+	<!-- import all gazebo-customization elements, including gazebo colors -->
+	<xacro:include filename="$(find p3dx_description)/urdf/gz.xacro" />
+	<!-- import the pioneer 3dx's wheels -->
+	<xacro:include filename="$(find p3dx_description)/urdf/p3dx_wheel.xacro" />
 
-  <!-- chassis -->
+	<!-- chassis -->
 	<link name="base_link">
 		<inertial>
 			<mass value="3.5" />
-			<!--<origin xyz="-0.025 0 -0.223"/> -->
+			<origin xyz="-0.025 0 -0.223"/>
 			<origin xyz="-0.05 0 0" />
 			<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
 		</inertial>
 
-		<visual name="base_visual">
+		<visual name="base_link">
 			<origin xyz="-0.045 0 0.148" rpy="0 0 0" />
 			<geometry name="pioneer_geom">
 				<mesh filename="$(find p3dx_description)/meshes/chassis.stl" />
@@ -34,7 +34,7 @@
 		</collision>
 	</link>
 
-  <!-- top_plate -->
+	<!-- top_plate -->
 	<link name="top_plate">
 		<inertial>
 			<mass value="0.01" />
@@ -67,7 +67,7 @@
 		<child link="top_plate" />
 	</joint>
 
-  <!-- swivel -->
+	<!-- swivel -->
 	<link name="swivel">
 		<inertial>
 			<mass value="0.1" />
@@ -93,7 +93,7 @@
 		</collision>
 	</link>
 
-	<joint name="base_swivel_joint" type="continuous">
+	<joint name="base_swivel_joint" type="fixed">
 		<origin xyz="-0.185 0 0.055" rpy="0 0 0" />
 		<axis xyz="0 0 1" />
 		<anchor xyz="0 0 0" />
@@ -103,7 +103,7 @@
 		<child link="swivel" />
 	</joint>
 
-  <!-- center_hubcap -->
+	<!-- center_hubcap -->
 	<link name="center_hubcap">
 		<inertial>
 			<mass value="0.01" />
@@ -140,7 +140,7 @@
 		<child link="center_wheel" />
 	</joint>
 
-  <!-- center_wheel -->
+	<!-- center_wheel -->
 	<link name="center_wheel">
 		<inertial>
 			<mass value="0.1" />
@@ -168,22 +168,22 @@
 	</link>
 
 	<joint name="center_wheel_joint" type="fixed">
-		<origin xyz="-0.0035 0 -0.001" rpy="0 0 0"/>
-		<parent link="center_wheel"/>
-		<child link="center_hubcap"/>
+		<origin xyz="-0.0035 0 -0.001" rpy="0 0 0" />
+		<parent link="center_wheel" />
+		<child link="center_hubcap" />
 	</joint>
 
-	<xacro:p3dx_wheel suffix="left" parent="base_link" reflect="1"/>
-	<xacro:p3dx_wheel suffix="right" parent="base_link" reflect="-1"/>
+	<xacro:p3dx_wheel suffix="left" parent="base_link" reflect="1" />
+	<xacro:p3dx_wheel suffix="right" parent="base_link" reflect="-1" />
 
-  <!-- front_sonar -->
+	<!-- front_sonar -->
 	<link name="front_sonar">
 		<inertial>
 			<mass value="0.0001" />
 			<origin xyz="0 0 0" />
 			<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
 		</inertial>
-		
+
 		<visual name="front_sonar_vis">
 			<origin rpy="0 0 0" xyz="0 0 0" />
 			<geometry name="pioneer_geom">
@@ -193,7 +193,7 @@
 				<color rgba="0.715 0.583 0.210 1.0" />
 			</material>
 		</visual>
-		
+
 		<collision>
 			<origin rpy="0 0 0" xyz="0 0 0" />
 			<geometry>
@@ -201,13 +201,13 @@
 			</geometry>
 		</collision>
 	</link>
-	
+
 	<joint name="base_front_joint" type="fixed">
 		<origin rpy="0 0 0" xyz="0.109 0 0.209" />
 		<parent link="base_link" />
 		<child link="front_sonar" />
 	</joint>
-	
+
 	<!-- lms100 laser -->
 	<link name="lms100">
 		<inertial>
@@ -219,7 +219,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry>
-				<mesh filename="$(find p3dx_description)/meshes/lms100.dae" />     
+				<mesh filename="$(find p3dx_description)/meshes/lms100.dae" />
 			</geometry>
 		</visual>
 
