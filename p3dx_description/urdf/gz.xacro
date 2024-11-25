@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 
-<robot>
-
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="p3dx">
 	<!-- properties (constants) -->
 	<!-- <property name="ns" value="p3dx" /> -->
 
 	<!-- ros_control plugin -->
 	<!-- <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>p3dx</robotNamespace>
-    </plugin>
-  </gazebo> -->
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<robotNamespace>p3dx</robotNamespace>
+		</plugin>
+	</gazebo> -->
 
 	<!-- base_link -->
 	<gazebo reference="base_link">
@@ -46,6 +45,7 @@
 		<material value="Gazebo/Yellow" />
 	</gazebo>
 
+	<!-- Plugins -->
 	<gazebo>
 
 		<!-- GZ Gazebo Plugins -->
@@ -56,45 +56,53 @@
 		<plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
 		</plugin>
 
-		<plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+		<plugin filename="gz-sim-joint-state-publisher-system"
+			name="gz::sim::systems::JointStatePublisher">
 		</plugin>
-		
+
 		<!-- IGN Gazebo Plugins -->
-		<!-- <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+		<!-- <plugin filename="ignition-gazebo-sensors-system"
+		name="ignition::gazebo::systems::Sensors">
 			<render_engine>ogre2</render_engine>
 		</plugin>
 
 		<plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::systems::Imu">
 		</plugin>
 
-		<plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+		<plugin filename="ignition-gazebo-joint-state-publisher-system"
+		name="ignition::gazebo::systems::JointStatePublisher">
 		</plugin> -->
 
-	</gazebo>
+		<!-- </gazebo> -->
 
-	<!-- differential drive -->
-	<gazebo>
-		<plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
-			<alwaysOn>true</alwaysOn>
-			<updateRate>100</updateRate>
+		<!-- differential drive -->
+		<!-- <gazebo> -->
+		<plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
 			<left_joint>base_left_wheel_joint</left_joint>
 			<right_joint>base_right_wheel_joint</right_joint>
 			<wheelSeparation>0.39</wheelSeparation>
 			<wheelDiameter>0.15</wheelDiameter>
+			<odom_publish_frequency>30</odom_publish_frequency>
+			<topic>/cmd_vel</topic>
+			<frame_id>odom</frame_id>
+			<child_frame_id>base_link</child_frame_id>
+			<!-- <alwaysOn>true</alwaysOn>
+			<updateRate>100</updateRate>
 			<torque>5</torque>
 			<commandTopic>p3dx/cmd_vel</commandTopic>
 			<odometryTopic>p3dx/odom</odometryTopic>
 			<odometryFrame>odom</odometryFrame>
-			<robotBaseFrame>base_link</robotBaseFrame>
+			<robotBaseFrame>base_link</robotBaseFrame> -->
 		</plugin>
 	</gazebo>
 
 	<!-- ground truth -->
 	<gazebo>
 		<!-- <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so"> -->
-		<plugin name="ignition::gazebo::systems::OdometryPublisher" filename="libignition-gazebo6-odometry-publisher-system">
+		<plugin filename="libgz-sim-odometry-publisher-system"
+			name="gz::sim::systems::OdometryPublisher">
 			<odom_frame>odom</odom_frame>
-			<robot_base_frame>base_visual</robot_base_frame>
+			<robot_base_frame>base_link</robot_base_frame>
 			<odom_topic>odom</odom_topic>
 			<tf_topic>/tf</tf_topic>
 			<dimensions>2</dimensions>
