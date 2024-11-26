@@ -8,7 +8,6 @@
 	<xacro:include filename="$(find p3dx_description)/urdf/p3dx_wheel.xacro" />
 
 	<!-- chassis -->
-	<link name="base" />
 	<link name="base_link">
 		<inertial>
 			<mass value="3.5" />
@@ -34,12 +33,6 @@
 			</geometry>
 		</collision>
 	</link>
-
-	<joint name="base_footprint_joint" type="fixed">
-		<origin xyz="0 0 0" rpy="0 0 0" />
-		<parent link="base" />
-		<child link="base_link" />
-	</joint>
 
 	<!-- top_plate -->
 	<link name="top_plate">
