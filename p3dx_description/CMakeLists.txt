@@ -3,7 +3,7 @@ project(p3dx_description)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY launch meshes urdf worlds
+install(DIRECTORY launch meshes urdf worlds rviz
     DESTINATION share/${PROJECT_NAME}/
 )
 
