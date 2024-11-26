@@ -44,7 +44,7 @@ def generate_launch_description():
         name='rviz2',
         output='screen',
         arguments=[
-            '-d', os.path.join(get_package_share_directory('p3dx_description'), 'rviz', 'setup.rviz')]
+            '-d', os.path.join(get_package_share_directory('p3dx_description'), 'rviz', 'custom_setup.rviz')]
     )
 
     return LaunchDescription([
