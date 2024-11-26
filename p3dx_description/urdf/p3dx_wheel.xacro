@@ -19,7 +19,7 @@
 			<visual name="base_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="pioneer_geom">
-					<mesh filename="$(find p3dx_description)/meshes/${suffix}_hubcap.stl" />
+					<mesh filename="file://$(find p3dx_description)/meshes/${suffix}_hubcap.stl" />
 				</geometry>
 
 				<material name="HubcapYellow">
@@ -56,7 +56,7 @@
 			<visual name="base_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="pioneer_geom">
-					<mesh filename="$(find p3dx_description)/meshes/${suffix}_wheel.stl" />
+					<mesh filename="file://$(find p3dx_description)/meshes/${suffix}_wheel.stl" />
 				</geometry>
 				<material name="WheelBlack">
 					<color rgba="0.117 0.117 0.117 1" />
@@ -66,7 +66,7 @@
 			<collision>
 				<origin xyz="0 0 0" rpy="${-3.1415927/2} 0 0" />
 				<geometry>
-					<!--<mesh filename="$(find p3dx_description)/meshes/${suffix}_wheel.stl"/> -->
+					<mesh filename="file://$(find p3dx_description)/meshes/${suffix}_wheel.stl"/>
 					<cylinder radius="0.09" length="0.01" />
 				</geometry>
 			</collision>
@@ -99,7 +99,7 @@
 			<material>Gazebo/Black</material>
 			<mu1>0.5</mu1>
 			<mu2>50.0</mu2>
-			<kp>100000000.0</kp>
+			<kp>1000.0</kp>
 			<kd>1.0</kd>
 		</gazebo>
 
