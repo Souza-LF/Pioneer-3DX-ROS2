@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ros2aria</name>
+  <version>0.1.0</version>
+  <description>
+    The <tt>Ros2Aria</tt> node provides a ROS2 interface for most Adept MobileRobots, MobileRobots Inc., and ActivMedia mobile robot bases including Pioneer 2, Pioneer 3, AmigoBot, PeopleBot, PowerBot, PatrolBot, Seekur, Seekur Jr., Pioneer LX, and any other past, current or future robot base supported by Adept MobileRobot's open source ARIA library. Information from the robot base, and velocity and acceleration control, is implemented via a <tt>Ros2Aria</tt> node, which publishes topics providing data recieved from the robot's embedded controller by ARIA, and sets desired velocity, acceleration and other commands in ARIA when new commands are received from command topics.
+    This package was developed with its ROS 1 equivalent on its base. It has been tested on P3DX Mobile Robot platform. This works in coherence with the AriaCoda library which can be installed from https://github.com/reedhedges/AriaCoda. 
+  </description>
+  <maintainer email="rvishwanath03@outlook.com">Vishwanath R</maintainer>
+  <license>GPL-3.0-only</license>
+  <author>Vishwanath R</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>pcl_ros</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
