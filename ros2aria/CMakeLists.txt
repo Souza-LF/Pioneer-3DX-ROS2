@@ -18,7 +18,6 @@ find_package(rcl_interfaces REQUIRED)
 find_package(pcl_ros REQUIRED)
 
 find_package(Boost REQUIRED COMPONENTS thread)
-include_directories(${Boost_INCLUDE_DIRS} )
 
 find_package(Aria QUIET)
 if(Aria_FOUND)
@@ -68,7 +67,11 @@ else()
 endif()
 
 add_executable(ros2aria_run src/Ros2Aria.cpp)
-
+target_compile_features(ros2aria_run PUBLIC c_std_99 cxx_std_17)  # Enforce C++17
+target_include_directories(ros2aria_run PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 target_link_libraries(ros2aria_run ${Boost_LIBRARIES} Aria pthread dl rt)
 set_target_properties(ros2aria_run PROPERTIES COMPILE_FLAGS "-fPIC")
 
