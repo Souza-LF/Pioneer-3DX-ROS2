@@ -9,6 +9,7 @@
 #endif
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/int8.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include <sstream>
 
@@ -31,6 +32,7 @@ protected:
   int serial_baud;
   std_msgs::msg::Bool motors_state;
   bool published_motors_state;
+  std_msgs::msg::Int8 recharge_state;
 
   // ArRobot library variables
   ArRobotConnector *conn;
@@ -39,6 +41,7 @@ protected:
 
   // Pointers
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr motors_state_pub_;
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr recharge_state_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmdvel_sub_;
 
@@ -63,11 +66,13 @@ Ros2AriaNode::Ros2AriaNode()
 
   // Publishers
   // Motors QoS and Motor Publisher with required settings
-  rclcpp::QoS motor_qos(5);
-  motor_qos.transient_local();
-  motors_state_pub_ = this->create_publisher<std_msgs::msg::Bool>("motors_state", motor_qos);
+  rclcpp::QoS common_qos(5);
+  common_qos.transient_local();
+  motors_state_pub_ = this->create_publisher<std_msgs::msg::Bool>("motors_state", common_qos);
   motors_state.data = false;
   published_motors_state = false;
+  recharge_state_pub_ = this->create_publisher<std_msgs::msg::Int8>("recharge_state", common_qos);
+  recharge_state.data = -2;
 
   veltime = this->now();
 }
@@ -139,6 +144,16 @@ int Ros2AriaNode::Setup()
 
 void Ros2AriaNode::publish()
 {
+  // Publish recharge state on change
+  char current_recharge_state = robot->getChargeState();
+  if (current_recharge_state != recharge_state.data)
+  {
+    recharge_state.data = current_recharge_state;
+    recharge_state_pub_->publish(recharge_state);
+    RCLCPP_INFO(this->get_logger(), "Ros2Aria : Publishing New Recharge State %d.", current_recharge_state);
+  }
+  
+  // Publish motor state on change
   bool current_motor_state = robot->areMotorsEnabled();
   if (current_motor_state != motors_state.data || !published_motors_state)
   {
