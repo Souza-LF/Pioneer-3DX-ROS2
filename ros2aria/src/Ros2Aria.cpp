@@ -198,6 +198,7 @@ void Ros2AriaNode::publish()
   tf2::Vector3 ros2_vec(pos.getX() / 1000.0, pos.getY() / 1000.0, 0.0);
   tf2::Transform ros2_tf(ros2_quat, ros2_vec);
   tf2::toMsg(ros2_tf, ros2_pose);
+  position.pose.pose = ros2_pose;
   position.twist.twist.linear.x = robot->getVel() / 1000.0; // Aria returns velocity in mm/s.
   position.twist.twist.linear.y = robot->getLatVel() / 1000.0;
   position.twist.twist.angular.z = robot->getRotVel() * M_PI / 180;
