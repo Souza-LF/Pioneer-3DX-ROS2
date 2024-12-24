@@ -13,6 +13,12 @@
 #include "std_msgs/msg/float32.hpp"
 #include "std_msgs/msg/float64.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "nav_msgs/msg/odometry.hpp"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 #include <sstream>
 
 using std::placeholders::_1;
@@ -33,15 +39,22 @@ protected:
   // Class variables
   std::string serial_port;
   int serial_baud;
+  std::string frame_id_odom;
+  std::string frame_id_base_link;
+  std::string frame_id_bumper;
+  std::string frame_id_sonar;
   std_msgs::msg::Bool motors_state;
   std_msgs::msg::Bool continuous;
   bool published_motors_state;
   std_msgs::msg::Int8 recharge_state;
   std_msgs::msg::Float64 batteryVoltage;
+  nav_msgs::msg::Odometry position;
+  geometry_msgs::msg::TransformStamped odom_trans;
 
   // ArRobot library variables
   ArRobotConnector *conn;
   ArRobot *robot;
+  ArPose pos;
   ArFunctorC<Ros2AriaNode> myPublishCB;
 
   // Pointers
@@ -49,8 +62,11 @@ protected:
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr recharge_state_pub_;
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr battery_volate_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr state_of_charge_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pose_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmdvel_sub_;
+
+  tf2_ros::TransformBroadcaster odom_broadcaster_;
 
   rclcpp::TimerBase::SharedPtr cmdvel_watchdog_timer_;
   rclcpp::Time veltime;
@@ -62,15 +78,24 @@ Ros2AriaNode::Ros2AriaNode()
       serial_baud(0),
       conn(nullptr),
       robot(nullptr),
-      myPublishCB(this, &Ros2AriaNode::publish)
+      myPublishCB(this, &Ros2AriaNode::publish),
+      odom_broadcaster_(this)
 {
   // Declare parameters
   this->declare_parameter("serial_port", "/dev/ttyUSB0");
   this->declare_parameter("serial_baud", 0);
+  this->declare_parameter("frame_id_odom", "odom");
+  this->declare_parameter("frame_id_base_link", "base_link");
+  this->declare_parameter("frame_id_bumper", "bumpers");
+  this->declare_parameter("frame_id_sonar", "sonar");
 
   // Get parameters
   serial_port = this->get_parameter("serial_port").as_string();
   serial_baud = this->get_parameter("serial_baud").as_int();
+  frame_id_odom = this->get_parameter("frame_id_odom").as_string();
+  frame_id_base_link = this->get_parameter("frame_id_base_link").as_string();
+  frame_id_bumper = this->get_parameter("frame_id_bumper").as_string();
+  frame_id_sonar = this->get_parameter("frame_id_sonar").as_string();
 
   // Publishers
   // Motors QoS and Motor Publisher with required settings
@@ -82,6 +107,7 @@ Ros2AriaNode::Ros2AriaNode()
   recharge_state_pub_ = this->create_publisher<std_msgs::msg::Int8>("recharge_state", common_qos);
   recharge_state.data = -2;
   battery_volate_pub_ = this->create_publisher<std_msgs::msg::Float64>("battery_state_of_charge", rclcpp::QoS(1000));
+  pose_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("pose", rclcpp::QoS(1000));
 
   veltime = this->now();
 }
@@ -162,6 +188,44 @@ int Ros2AriaNode::Setup()
 
 void Ros2AriaNode::publish()
 {
+
+  // Note, this is called via SensorInterpTask callback (myPublishCB, named "ROSPublishingTask"). ArRobot object 'robot' sholud not be locked or unlocked.
+  // Publish Odometry
+  pos = robot->getPose();
+  geometry_msgs::msg::Pose ros2_pose;
+  tf2::Quaternion ros2_quat;
+  ros2_quat.setRPY(0, 0, pos.getTh() * M_PI / 180);
+  tf2::Vector3 ros2_vec(pos.getX() / 1000.0, pos.getY() / 1000.0, 0.0);
+  tf2::Transform ros2_tf(ros2_quat, ros2_vec);
+  tf2::toMsg(ros2_tf, ros2_pose);
+  position.twist.twist.linear.x = robot->getVel() / 1000.0; // Aria returns velocity in mm/s.
+  position.twist.twist.linear.y = robot->getLatVel() / 1000.0;
+  position.twist.twist.angular.z = robot->getRotVel() * M_PI / 180;
+  position.header.frame_id = frame_id_odom;
+  position.child_frame_id = frame_id_base_link;
+  position.header.stamp = this->now();
+  pose_pub_->publish(position);
+  RCLCPP_DEBUG(this->get_logger(), "Ros2Aria : publish: (time %f) pose x: %f, pose y: %f, pose angle: %f; linear vel x: %f, vel y: %f; angular vel z: %f", 
+    position.header.stamp.sec + position.header.stamp.nanosec * 1e-9, 
+    (double)position.pose.pose.position.x,
+    (double)position.pose.pose.position.y,
+    (double)position.pose.pose.orientation.w,
+    (double)position.twist.twist.linear.x,
+    (double)position.twist.twist.linear.y,
+    (double)position.twist.twist.angular.z
+  );
+
+  // publishing transform odom->base_link
+  odom_trans.header.stamp = this->now();
+  odom_trans.header.frame_id = frame_id_odom;
+  odom_trans.child_frame_id = frame_id_base_link;
+  odom_trans.transform.translation.x = pos.getX()/1000;
+  odom_trans.transform.translation.y = pos.getY()/1000;
+  odom_trans.transform.translation.z = 0.0;
+  tf2::Quaternion quat;
+  quat.setRPY(0, 0, pos.getTh() * M_PI / 180);
+  odom_trans.transform.rotation = tf2::toMsg(quat);
+  odom_broadcaster_.sendTransform(odom_trans);
 
   // Publish live battery voltage
   batteryVoltage.data = robot->getRealBatteryVoltageNow(); // Use getBatteryVoltageNow() if you want normalized value from 0 to 12V.
