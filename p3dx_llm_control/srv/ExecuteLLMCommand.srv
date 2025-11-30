@@ -1,0 +1,5 @@
+string command_text
+---
+bool success
+string status_message
+float64 estimated_duration

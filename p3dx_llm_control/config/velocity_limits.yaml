@@ -1,0 +1,14 @@
+p3dx_llm_controller:
+  ros__parameters:
+    # Maximum linear velocity in m/s (P3DX max is ~0.75 m/s, we use conservative limit)
+    max_linear_velocity: 0.25
+
+    # Maximum angular velocity in rad/s (P3DX max is ~140 deg/s = 2.44 rad/s)
+    max_angular_velocity: 0.5
+
+    # Maximum duration for any single command in seconds
+    # Note: Full 360° rotation at 0.5 rad/s takes ~12.6 seconds
+    max_command_duration: 15.0
+
+    # Rate at which cmd_vel messages are published in Hz
+    cmd_vel_publish_rate: 20.0

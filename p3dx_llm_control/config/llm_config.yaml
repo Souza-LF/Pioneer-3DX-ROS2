@@ -1,0 +1,14 @@
+p3dx_llm_controller:
+  ros__parameters:
+    # LLM model to use
+    llm_model: "gemini-2.5-flash"
+
+    # Gemini API key (get from https://aistudio.google.com/apikey)
+    # IMPORTANT: Replace this with your actual API key before running
+    gemini_api_key: "AIzaSyBw564SrT6uEXnH5Nle3t4lpFWTYVkLXUk"
+
+    # LLM API timeout in seconds
+    llm_timeout: 5.0
+
+    # Daily request limit for safety (Gemini free tier: 1500/day)
+    rate_limit_requests_per_day: 1500
