@@ -28,6 +28,7 @@ def generate_launch_description():
     two_d_lidar_enabled = LaunchConfiguration("two_d_lidar_enabled", default=True)
     odometry_source = LaunchConfiguration("odometry_source")
 
+    # Refer the ROS1 official GitHub to see what params are necessary!
     robot_description_content = get_xacro_to_doc(
         join(p3dx_path, "urdf", "p3dx.xacro"),
         {"sim_gz": "true",
@@ -41,6 +42,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
+        # This is GPT's suggestion to generate the same with the use of CommandLine
         # parameters=[
         #             {'robot_description': Command( \
         #             ['xacro ', join(p3dx_path, 'urdf/p3dx.xacro'),
