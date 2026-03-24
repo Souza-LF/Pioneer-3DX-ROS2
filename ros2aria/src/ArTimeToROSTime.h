@@ -11,15 +11,16 @@
 #include "Aria/ariaUtil.h"
 #endif
 
-rclcpp::Time convertArTimeToROS2(const ArTime &t)
+inline rclcpp::Time convertArTimeToROS2(const ArTime &t, const rclcpp::Node::SharedPtr &node)
 {
     // ARIA/ARNL times are in reference to an arbitrary starting time, not OS
     // clock, so find the time elapsed between now and t
     // to adjust the time stamp in ROS2 time vs. now accordingly.
     ArTime arianow;
-    const double dtsec = (double)t.mSecSince(arianow) / 1000.0;
-    rclcpp::Time current_time = rclcpp::Node::now();
-    return rclcpp::Time(current_time.seconds() - dtsec);
+    const double dtsec = static_cast<double>(t.mSecSince(arianow)) / 1000.0;
+    rclcpp::Time current_time = node->now();
+    rclcpp::Duration dt = rclcpp::Duration::from_seconds(dtsec);
+    return current_time - dt;
 }
 
 #endif
