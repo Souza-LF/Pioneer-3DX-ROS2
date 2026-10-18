@@ -1,1 +1,12 @@
-.vscode
+# Arquivos gerados pelo ROS 2 / colcon
+build/
+install/
+log/
+
+**/build/
+**/install/
+**/log/
+
+# Arquivos Python
+__pycache__/
+*.pyc.vscode

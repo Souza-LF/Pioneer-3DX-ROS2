@@ -13,7 +13,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time", default=True)
 
     p3dx_path = get_package_share_directory("p3dx_description")
-    world_file = LaunchConfiguration("world_file", default = join(p3dx_path, "worlds", "empty.sdf"))
+    world_file = LaunchConfiguration("world_file", default = join(p3dx_path, "worlds", "sala.sdf"))
     gz_sim_share = get_package_share_directory("ros_gz_sim")
 
     gz_sim = IncludeLaunchDescription(
@@ -30,7 +30,7 @@ def generate_launch_description():
             # Pass any arguments if your spawn.launch.py requires
         }.items()
     )
-
+	
     return LaunchDescription([
 
         AppendEnvironmentVariable(

@@ -100,7 +100,7 @@
   <!-- lms100 -->
   <gazebo reference="lms100">
     <sensor name="gpu_lidar" type="gpu_lidar">
-      <topic>p3dx/scan</topic>
+      <topic>/scan</topic>
       <update_rate>50</update_rate>
       <gz_frame_id>lms100</gz_frame_id>
       <!-- <pose>0 0 0 0 0 0</pose> -->
